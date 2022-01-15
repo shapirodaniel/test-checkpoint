@@ -23,10 +23,10 @@ jobs:
       - name: grade tests
         id: grade_tests
         run: |
-          prefix=" > test-checkpoint@1.0.0 test:ci > jest --json"
-          json_compressed=${${{ env.TEST_JSON }}#"$prefix"}
-          echo "this is json_compressed:"
-          echo $json_compressed
+          prefix=" > test-checkpoint@1.0.0 test:ci > jest --json ";
+          json_compressed=${${{ env.TEST_JSON }}#$prefix};
+          echo "this is json_compressed:";
+          echo $json_compressed;
         env:
           TEST_JSON: ${{ steps.test_json.outputs.TEST_JSON }}
 
