@@ -1,7 +1,8 @@
 name: grade checkpoint
 on:
   push:
-    branches: ['solution']
+    branches:
+      - 'solution'
 jobs:
   build:
     runs-on: 'ubuntu-latest'
