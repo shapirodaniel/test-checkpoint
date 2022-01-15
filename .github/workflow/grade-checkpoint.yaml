@@ -19,5 +19,9 @@ jobs:
         run: |
           ::set-output name=grade::$(npm run test)
       - name: send_grade
+        # at grade endpoint on remote server validate github.token
         run: |
-          curl -X POST https://univ-fsa-grade-endpoint.herokuapp.com/api/grade -H 'Authorization:Bearer ${{ secrets.GITHUB_TOKEN }} -H 'Content-Type:application/json' -d '{"github_name":"${{ github.actor }}","grade":"${{ steps.run_tests.outputs.grade }}"}'
+          curl -X POST https://univ-fsa-grade-endpoint.herokuapp.com/api/grade \
+            -H 'Authorization:Bearer ${{ github.token }}' \
+            -H 'Content-Type:application/json' \
+            -d '{"github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","grade":"${{ steps.run_tests.outputs.grade }}"}'
