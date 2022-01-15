@@ -23,7 +23,7 @@ jobs:
       - name: grade tests
         id: grade_tests
         run: |
-          echo ${{ $TEST_JSON }}
+          echo $TEST_JSON
           echo "::set-output name=grade::$(jq $TEST_JSON | .numPassedTests) / .numTotalTests)"
         env:
           TEST_JSON: ${{ steps.test_json.outputs.TEST_JSON }}
