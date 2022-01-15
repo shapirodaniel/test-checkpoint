@@ -20,6 +20,7 @@ jobs:
           jest_output=$(npm run test:ci)
           ratio=${{ fromJSON($jest_output).numPassedTests / fromJSON($jest_output).numTotalTests }}
           ::set-output name=grade::$($ratio)
+        shell: bash
       - name: send_grade
         # at grade endpoint on remote server validate github.token
         run: |
@@ -27,3 +28,4 @@ jobs:
             -H 'Authorization:Bearer ${{ github.token }}' \
             -H 'Content-Type:application/json' \
             -d '{"github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","grade":"${{ steps.run_tests.outputs.grade }}"}'
+        shell: bash
