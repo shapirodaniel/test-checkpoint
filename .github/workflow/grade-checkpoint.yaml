@@ -1,0 +1,23 @@
+name: grade checkpoint
+on:
+  push:
+    branches: ['solution']
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: checkout
+        uses: action/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: install dependencies
+        run: npm i
+      - name: run_tests
+        outputs:
+          grade:
+            description: 'quotient of tests passed over total tests run'
+        run: |
+          ::set-output name=grade::$(npm run test)
+      - name: send_grade
+        run: |
+          curl -X POST https://univ-fsa-grade-endpoint.herokuapp.com/api/grade -H 'Authorization:Bearer ${{ secrets.GITHUB_TOKEN }} -H 'Content-Type:application/json' -d '{"github_name":"${{ github.actor }}","grade":"${{ steps.run_tests.outputs.grade }}"}'
