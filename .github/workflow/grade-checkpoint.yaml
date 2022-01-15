@@ -15,9 +15,12 @@ jobs:
       - name: run_tests
         outputs:
           grade:
-            description: 'quotient of tests passed over total tests run'
+            description: 'ratio of passed tests to total tests'
+        # https://www.npmjs.com/package/jest-cli/v/0.10.0#use---json-for-ci-integrations
         run: |
-          ::set-output name=grade::$(npm run test)
+          jest_output=$(npm run test:ci)
+          ratio=${{ fromJSON($jest_output).numPassedTests / fromJSON($jest_output).numTotalTests }}
+          ::set-output name=grade::$($ratio)
       - name: send_grade
         # at grade endpoint on remote server validate github.token
         run: |
