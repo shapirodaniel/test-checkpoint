@@ -11,22 +11,26 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - name: install dependencies
         run: npm i
+
       - name: jest output in json format
         id: test_json
         # https://www.npmjs.com/package/jest-cli/v/0.10.0#use---json-for-ci-integrations
         run: echo "::set-output name=testJson::$(npm run test:ci)"
+
       - name: grade tests
         id: grade_tests
         run: echo "::set-output name=grade::$(jq $testJson | .numPassedTests / .numTotalTests)"
         env:
           testJson: ${{ steps.test_json.outputs.testJson }}
+
       - name: send_grade
         # at grade endpoint on remote server validate github.token
-        shell: bash
         run: |
+          COMMIT_DATE_TIME=$(git show --no-patch --no-notes --pretty='%cd' ${{ github.sha }})
           curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
             -H 'Authorization:Bearer ${{ github.token }}' \
             -H 'Content-Type:application/json' \
-            -d '{"github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","grade":"${{ steps.grade_tests.outputs.grade }}"}'
+            -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"$($COMMIT_DATE_TIME)","grade":"${{ steps.grade_tests.outputs.grade }}"}'
