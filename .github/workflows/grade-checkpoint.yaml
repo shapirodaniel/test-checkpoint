@@ -12,10 +12,8 @@ jobs:
           fetch-depth: 0
       - name: install dependencies
         run: npm i
-      - name: run_tests
-        outputs:
-          grade:
-            description: 'ratio of passed tests to total tests'
+      - name: run tests
+        id: run_tests
         # https://www.npmjs.com/package/jest-cli/v/0.10.0#use---json-for-ci-integrations
         run: |
           jest_output=$(npm run test:ci)
