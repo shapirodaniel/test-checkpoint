@@ -18,13 +18,12 @@ jobs:
       - name: jest output in json format
         id: test_json
         # https://www.npmjs.com/package/jest-cli/v/0.10.0#use---json-for-ci-integrations
-        run: echo "::set-output name=TEST_JSON::$(npm run test:ci)"
+        run: echo ::set-output name=TEST_JSON::$(npm run test:ci)
 
       - name: grade tests
         id: grade_tests
         run: |
-          echo $TEST_JSON
-          echo "::set-output name=grade::$(jq $TEST_JSON | .numPassedTests) / .numTotalTests)"
+          echo 'this is testJson: $TEST_JSON'
         env:
           TEST_JSON: ${{ steps.test_json.outputs.TEST_JSON }}
 
