@@ -23,7 +23,7 @@ jobs:
       - name: grade tests
         id: grade_tests
         run: |
-          echo 'this is testJson: env.TEST_JSON'
+          echo 'this is testJson: ${{ env.TEST_JSON }}'
         env:
           TEST_JSON: ${{ steps.test_json.outputs.TEST_JSON }}
 
