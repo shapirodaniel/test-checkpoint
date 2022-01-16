@@ -15,26 +15,17 @@ jobs:
       - name: install dependencies
         run: npm i
 
-      - name: jest output in json format
+      - name: jest output to json file
         id: test_json
         # https://www.npmjs.com/package/jest-cli/v/0.10.0#use---json-for-ci-integrations
-        run: |
-          json_compressed=$(npm run test:ci | sed 's/^[^{]*//g' | sed 's/[^}]*$//g');
-          json_compressed=${json_compressed//$'\n'/};
-          echo ::set-output name=TEST_JSON::$json_compressed;
+        run: npm run test:ci
 
       - name: grade tests
         id: grade_tests
         run: |
-          test_json=${{ env.TEST_JSON }}
-
-          echo "test json is: $test_json"
-
-          num_passed_tests=$(jq -r -s $test_json '.' | jq '.numPassedTests'); 
-          num_total_tests=$(jq -r -s $test_json '.' | jq '.numTotalTests'); 
+          num_passed_tests=$(jq '.numPassedTests' testOutput.json)
+          num_total_tests=$(jq '.numTotalTests' testOutput.json)
           echo ::set-output name=GRADE::$(echo "scale=3; $num_passed_tests / $num_total_tests" | bc);
-        env:
-          TEST_JSON: ${{ steps.test_json.outputs.TEST_JSON }}
 
       - name: send_grade
         # at grade endpoint on remote server validate github.token
