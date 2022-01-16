@@ -38,8 +38,6 @@ jobs:
           GRADE_SECRET: ${{ secrets.GRADE_SECRET }}
       - name: send grade
         run: |
-          echo 'access_token is: ${{ env.ACCESS_TOKEN }}'
-          echo '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
           curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
             -H 'Authorization:Bearer ${{ env.ACCESS_TOKEN }}' \
             -H 'Content-Type:application/json' \
