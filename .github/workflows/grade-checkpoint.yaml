@@ -16,8 +16,6 @@ jobs:
         run: npm i
 
       - name: jest output to json file
-        id: test_json
-        # https://www.npmjs.com/package/jest-cli/v/0.10.0#use---json-for-ci-integrations
         run: npm run test:ci
 
       - name: grade tests
@@ -27,17 +25,18 @@ jobs:
           num_total_tests=$(jq '.numTotalTests' testOutput.json)
           echo ::set-output name=GRADE::$(echo "scale=3; $num_passed_tests / $num_total_tests" | bc);
 
-      - name: send_grade
-        # at grade endpoint on remote server validate github.token
-        run: |
-          commit_date_ms=$(/usr/bin/git show -s --format=%ct ${{ github.sha }});
-          echo $commit_date_ms
+      - name: get commit date
+        id: commit_date_unix_epoch
+        run: echo ::set-output name=DATE::$(/usr/bin/git show -s --format=%ct ${{ github.sha }})
 
-          echo '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"$commit_date_ms","grade":"${{ env.GRADE }}"}'
+      - name: send_grade
+        run: |
+          echo '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
 
           # curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
           #   -H 'Authorization:Bearer ${{ github.token }}' \
           #   -H 'Content-Type:application/json' \
-          #   -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"$commit_date_ms","grade":"${{ env.GRADE }}"}'
+          #   -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
         env:
+          COMMIT_DATE_MS: ${{ steps.commit_date_unix_epoch.DATE }}
           GRADE: ${{ steps.grade_tests.outputs.GRADE }}
