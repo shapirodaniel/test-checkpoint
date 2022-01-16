@@ -14,8 +14,11 @@ jobs:
 
       - name: configure github actions bot
         run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
+          echo "git version is: "; 
+          echo $(git --version);
+          git config user.name "GitHub Actions Bot";
+          git config user.email "<>";
+          git show;
 
       - name: install dependencies
         run: npm i
@@ -32,9 +35,9 @@ jobs:
 
       - name: get commit date
         id: commit_date_unix_epoch
-        run: echo ::set-output name=DATE::$(git show -s --format=%ct ${{ github.sha }})
+        run: echo ::set-output name=DATE::git show -s --format=%ct ${{ github.sha }}
 
-      - name: send_grade
+      - name: send grade
         run: |
           echo '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
 
