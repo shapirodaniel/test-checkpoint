@@ -4,10 +4,10 @@ secret=${env.JWT_SECRET}
 id=${env.GITHUB_NAME}
 sha=${env.GITHUB_SHA}
 
-header='{
-    "typ": "JWT",
-    "alg": "HS256",
-}'
+header=$( jq --null-input \
+    --arg typ "JWT" \
+    --arg alg "HS256" \
+    '{"typ":$typ,"alg":$alg}')
 
 header=$(
     echo "${header}" | jq --arg time_str "$(date +%s)" \
@@ -17,11 +17,11 @@ header=$(
     | .exp=($time_num + 300)
     '
 )
-payload=<<EOF
-{
-    "id": "${id}"
-}
-EOF
+
+payload=$(jq --null-input \
+    --arg id "${id}" \
+    --arg sha "${sha}" \
+    '{"id": $id, "sha": $sha}')
 
 base64_encode()
 {
