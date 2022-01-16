@@ -28,7 +28,7 @@ jobs:
         run: |
           num_passed_tests=$(jq '.numPassedTests')
           num_total_tests=$(jq '.numTotalTests')
-          echo ::set-output name=GRADE::$(num_passed_tests / num_total_tests)
+          echo ::set-output name=GRADE::$($num_passed_tests / $num_total_tests)
         env:
           TEST_JSON: ${{ steps.test_json.outputs.TEST_JSON }}
 
@@ -39,6 +39,6 @@ jobs:
           curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
             -H 'Authorization:Bearer ${{ github.token }}' \
             -H 'Content-Type:application/json' \
-            -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"$($COMMIT_DATE_TIME)","grade":"${{ env.GRADE }}"}'
+            -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"$COMMIT_DATE_TIME","grade":"${{ env.GRADE }}"}'
         env:
           GRADE: ${{ steps.grade_tests.GRADE }}
