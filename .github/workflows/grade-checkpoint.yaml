@@ -27,20 +27,22 @@ jobs:
         id: grade_tests
         run: |
           num_passed_tests=$(jq '.numPassedTests');
+          echo "$num_passed_tests"
           num_total_tests=$(jq '.numTotalTests');
+          echo "$num_total_tests"
           echo ::set-output name=GRADE::$(echo "scale=3; $num_passed_tests / $num_total_tests" | bc);
         env:
           TEST_JSON: ${{ steps.test_json.outputs.TEST_JSON }}
 
-      - name: send_grade
-        # at grade endpoint on remote server validate github.token
-        run: |
-          echo "env.GRADE";
-          COMMIT_DATE_TIME=$(git show --no-patch --no-notes --pretty='%cd' ${{ github.sha }});
-          echo $COMMIT_DATE_TIME;
-          # curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
-          #   -H 'Authorization:Bearer ${{ github.token }}' \
-          #   -H 'Content-Type:application/json' \
-          #   -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"$COMMIT_DATE_TIME","grade":"${{ env.GRADE }}"}'
-        env:
-          GRADE: ${{ steps.grade_tests.outputs.GRADE }}
+      # - name: send_grade
+      #   # at grade endpoint on remote server validate github.token
+      #   run: |
+      #     echo "env.GRADE";
+      #     COMMIT_DATE_TIME=$(git show --no-patch --no-notes --pretty='%cd' ${{ github.sha }});
+      #     echo $COMMIT_DATE_TIME;
+      #     # curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
+      #     #   -H 'Authorization:Bearer ${{ github.token }}' \
+      #     #   -H 'Content-Type:application/json' \
+      #     #   -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"$COMMIT_DATE_TIME","grade":"${{ env.GRADE }}"}'
+      #   env:
+      #     GRADE: ${{ steps.grade_tests.outputs.GRADE }}
