@@ -12,8 +12,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: install git
-        run: apt-get install -y git
+      # - name: install git
+      #   run: apt-get install -y git
 
       - name: install dependencies
         run: npm i
@@ -30,7 +30,7 @@ jobs:
 
       - name: get commit date
         id: commit_date_unix_epoch
-        run: echo ::set-output name=DATE::$(git show -s --format=%ct ${{ github.sha }})
+        run: echo ::set-output name=DATE::$(/usr/bin/git show -s --format=%ct ${{ github.sha }})
 
       - name: send_grade
         run: |
@@ -41,5 +41,5 @@ jobs:
           #   -H 'Content-Type:application/json' \
           #   -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
         env:
-          COMMIT_DATE_MS: ${{ steps.commit_date_unix_epoch.DATE }}
+          COMMIT_DATE_MS: ${{ steps.commit_date_unix_epoch.outputs.DATE }}
           GRADE: ${{ steps.grade_tests.outputs.GRADE }}
