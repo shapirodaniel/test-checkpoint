@@ -27,8 +27,8 @@ jobs:
         id: grade_tests
         run: |
           test_json=${{ env.TEST_JSON }}
-          num_passed_tests=$(jq -r -s $test_json '.' | jq '.numPassedTests'); 
-          num_total_tests=$(jq -r -s $test_json '.' | jq '.numTotalTests'); 
+          num_passed_tests=$(jq -r -s "$test_json" '.' | jq '.numPassedTests'); 
+          num_total_tests=$(jq -r -s "$test_json" '.' | jq '.numTotalTests'); 
           echo ::set-output name=GRADE::$(echo "scale=3; $num_passed_tests / $num_total_tests" | bc);
         env:
           TEST_JSON: ${{ steps.test_json.outputs.TEST_JSON }}
@@ -36,10 +36,13 @@ jobs:
       - name: send_grade
         # at grade endpoint on remote server validate github.token
         run: |
-          commit_date_ms=$(git show -s --format=%ct ${{ github.sha }});
-          curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
-            -H 'Authorization:Bearer ${{ github.token }}' \
-            -H 'Content-Type:application/json' \
-            -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"$commit_date_ms","grade":"${{ env.GRADE }}"}'
+          commit_date_ms=$(/usr/bin/git show -s --format='%ct' ${{ github.sha }});
+
+          echo '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"$commit_date_ms","grade":"${{ env.GRADE }}"}'
+
+          # curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
+          #   -H 'Authorization:Bearer ${{ github.token }}' \
+          #   -H 'Content-Type:application/json' \
+          #   -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"$commit_date_ms","grade":"${{ env.GRADE }}"}'
         env:
           GRADE: ${{ steps.grade_tests.outputs.GRADE }}
