@@ -12,8 +12,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: install git
-        run: apt-get install -y git
+      - name: configure github actions bot
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
 
       - name: install dependencies
         run: npm i
