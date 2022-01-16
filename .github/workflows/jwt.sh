@@ -1,7 +1,8 @@
 #!/bin/sh
 
-secret=env.JWT_SECRET
-id=env.GITHUB_NAME
+secret=${env.JWT_SECRET}
+id=${env.GITHUB_NAME}
+sha=${env.GITHUB_SHA}
 
 header='{
     "typ": "JWT",
