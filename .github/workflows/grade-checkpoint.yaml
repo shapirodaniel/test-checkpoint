@@ -12,14 +12,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # - name: configure github actions bot
-      #   run: |
-      #     echo "git version is: ";
-      #     echo $(git --version);
-      #     git config user.name "GitHub Actions Bot";
-      #     git config user.email "<>";
-      #     git show;
-
       - name: install dependencies
         run: npm i
 
@@ -48,5 +40,5 @@ jobs:
           #   -H 'Content-Type:application/json' \
           #   -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
         env:
-          COMMIT_DATE_MS: ${{ steps.commit_date_unix_epoch.outputs.DATE }}
+          DATE: ${{ steps.commit_date_unix_epoch.outputs.DATE }}
           GRADE: ${{ steps.grade_tests.outputs.GRADE }}
