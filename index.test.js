@@ -5,7 +5,7 @@ describe('functions', () => {
     y = 20;
 
   test('add', () => {
-    expect(add(x, y)).toBe(31);
+    expect(add(x, y)).toBe(32);
   });
 
   test('subtract', () => {
