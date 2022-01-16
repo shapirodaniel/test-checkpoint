@@ -11,34 +11,28 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: install dependencies
+      - name: npm install
         run: npm i
-
-      - name: jest output to json file
+      - name: jest output to .json
         run: npm run test:ci
-
-      - name: grade tests
-        id: grade_tests
+      - name: calculate grade
+        id: calculate_grade
         run: |
           num_passed_tests=$(jq '.numPassedTests' testOutput.json)
           num_total_tests=$(jq '.numTotalTests' testOutput.json)
           echo ::set-output name=GRADE::$(echo "scale=3; $num_passed_tests / $num_total_tests" | bc);
-
-      - name: get commit date
+      - name: get commit date (unix epoch)
         id: commit_date_unix_epoch
         run: |
           date=$(git show -s --format=%ct ${{ github.sha }})
           echo ::set-output name=DATE::$date
-
       - name: send grade
         run: |
           echo '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
-
-          # curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
-          #   -H 'Authorization:Bearer ${{ github.token }}' \
-          #   -H 'Content-Type:application/json' \
-          #   -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
+          curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
+            -H 'Authorization:Bearer ${{ github.token }}' \
+            -H 'Content-Type:application/json' \
+            -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
         env:
           DATE: ${{ steps.commit_date_unix_epoch.outputs.DATE }}
-          GRADE: ${{ steps.grade_tests.outputs.GRADE }}
+          GRADE: ${{ steps.calculate_grade.outputs.GRADE }}
