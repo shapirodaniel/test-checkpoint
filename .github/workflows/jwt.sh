@@ -1,6 +1,6 @@
 #!/bin/sh
 
-secret=${env.JWT_SECRET}
+secret=${env.GRADE_SECRET}
 id=${env.GITHUB_NAME}
 sha=${env.GITHUB_SHA}
 
