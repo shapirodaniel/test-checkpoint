@@ -20,19 +20,27 @@ jobs:
         run: |
           num_passed_tests=$(jq '.numPassedTests' testOutput.json)
           num_total_tests=$(jq '.numTotalTests' testOutput.json)
-          echo ::set-output name=GRADE::$(echo "scale=3; $num_passed_tests / $num_total_tests" | bc);
+          echo ::set-output name=GRADE::$(echo "scale=3; $num_passed_tests / $num_total_tests" | bc)
       - name: get commit date (unix epoch)
         id: commit_date_unix_epoch
         run: |
           date=$(git show -s --format=%ct ${{ github.sha }})
           echo ::set-output name=DATE::$date
+      - name: generate access token
+        id: generate_access_token
+        run: |
+          chmod +x jwt.sh
+          access_token=$(bash ./jwt.sh)
+          echo ::set-output name=ACCESS_TOKEN::$access_token
       - name: send grade
         run: |
+          echo 'access_token is: ACCESS_TOKEN'
           echo '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
           # curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
-          #   -H 'Authorization:Bearer ${{ github.token }}' \
+          #   -H 'Authorization:Bearer ${{ env.ACCESS_TOKEN }}' \
           #   -H 'Content-Type:application/json' \
           #   -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
         env:
           DATE: ${{ steps.commit_date_unix_epoch.outputs.DATE }}
           GRADE: ${{ steps.calculate_grade.outputs.GRADE }}
+          ACCESS_TOKEN: ${{ steps.generate_access_token.outputs.ACCESS_TOKEN }}
