@@ -39,10 +39,10 @@ jobs:
         run: |
           echo 'access_token is: ${{ env.ACCESS_TOKEN }}'
           echo '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
-          # curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
-          #   -H 'Authorization:Bearer ${{ env.ACCESS_TOKEN }}' \
-          #   -H 'Content-Type:application/json' \
-          #   -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
+          curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
+            -H 'Authorization:Bearer ${{ env.ACCESS_TOKEN }}' \
+            -H 'Content-Type:application/json' \
+            -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
         env:
           DATE: ${{ steps.commit_date_unix_epoch.outputs.DATE }}
           GRADE: ${{ steps.calculate_grade.outputs.GRADE }}
