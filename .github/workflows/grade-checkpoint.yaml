@@ -14,7 +14,7 @@ jobs:
       - name: npm install
         run: npm i
       - name: jest output to .json
-        run: npm run test:ci
+        run: npm run test:ci:grade
       - name: calculate grade
         id: calculate_grade
         run: |
