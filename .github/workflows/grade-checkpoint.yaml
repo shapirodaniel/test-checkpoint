@@ -29,6 +29,7 @@ jobs:
       - name: generate access token
         id: generate_access_token
         run: |
+          ls -a
           chmod +x ./.github/jwt.sh
           access_token=$(bash .github/jwt.sh)
           echo ::set-output name=ACCESS_TOKEN::$access_token
