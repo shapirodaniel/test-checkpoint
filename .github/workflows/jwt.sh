@@ -28,9 +28,9 @@ hmacsha256_sign()
     printf '%s' "${input}" | openssl dgst -binary -sha256 -hmac "${secret}"
 }
 
-secret=${env.GRADE_SECRET}
-id=${env.GITHUB_NAME}
-sha=${env.GITHUB_SHA}
+secret=${GRADE_SECRET}
+id=${GITHUB_NAME}
+sha=${GITHUB_SHA}
 iat="$(date +%s)"
 exp=$(echo "$iat + 300" | bc)
 
