@@ -43,7 +43,7 @@ jobs:
       - name: send grade
         run: |
           curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
-            -H 'Authorization:Bearer ${{ env.token }}' \
+            -H 'Authorization:Bearer ${{ env.ACCESS_TOKEN }}' \
             -H 'Content-Type:application/json' \
             -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
         env:
