@@ -32,10 +32,14 @@ jobs:
         with:
           secret: ${{ env.GRADE_SECRET }}
           payload: '{"id":"${{ env.GITHUB_NAME }}","sha":"${{ env.SHA }}"}'
+
+        # ------------------------------------------------------------------------------------ #
+        # # jwt.sh implementation does not produce compatible secret encoding with jsonwebtoken>
         # run: |
         #   chmod +x ./.github/workflows/jwt.sh
         #   access_token=$(bash ./.github/workflows/jwt.sh)
         #   echo ::set-output name=ACCESS_TOKEN::$access_token
+
         env:
           GITHUB_NAME: ${{ github.actor }}
           SHA: ${{ github.sha }}
