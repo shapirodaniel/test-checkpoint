@@ -48,6 +48,6 @@ payload=$(jq --null-input \
 
 header_base64=$(echo "${header}" | json | base64_encode)
 payload_base64=$(echo "${payload}" | json | base64_encode)
-signature=$(echo "${header_payload}" | hmacsha256_sign | base64_encode)
+signature=$(echo "${header}.${payload}" | hmacsha256_sign | base64_encode)
 
 echo "${header_base64}.${payload_base64}.${signature}"
