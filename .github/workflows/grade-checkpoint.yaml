@@ -31,7 +31,7 @@ jobs:
         uses: morzzz007/github-actions-jwt-generator@1.0.1
         with:
           secret: ${{ env.GRADE_SECRET }}
-          payload: '{"id":"${{ env.GITHUB_NAME }},"sha":"${{ env.SHA }}"}'
+          payload: '{"id":"${{ env.GITHUB_NAME }}","sha":"${{ env.SHA }}"}'
         # run: |
         #   chmod +x ./.github/workflows/jwt.sh
         #   access_token=$(bash ./.github/workflows/jwt.sh)
