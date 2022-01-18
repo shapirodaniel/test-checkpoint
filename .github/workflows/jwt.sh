@@ -34,8 +34,6 @@ sha=${GITHUB_SHA}
 iat="$(date +%s)"
 exp=$(echo "$iat + 300" | bc)
 
-echo "$secret, $id, $sha"
-
 header=$( jq --null-input \
     --arg typ "JWT" \
     --arg alg "HS256" \
