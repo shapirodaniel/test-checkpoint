@@ -28,10 +28,14 @@ jobs:
           echo ::set-output name=DATE::$date
       - name: generate access token
         id: generate_access_token
-        run: |
-          chmod +x ./.github/workflows/jwt.sh
-          access_token=$(bash ./.github/workflows/jwt.sh)
-          echo ::set-output name=ACCESS_TOKEN::$access_token
+        uses: morzzz007/github-actions-jwt-generator@1.0.1
+        with:
+          secret: ${{ env.GRADE_SECRET }}
+          payload: '{"id":"${{ env.GITHUB_NAME }},"sha":"${{ env.SHA }}"}'
+        # run: |
+        #   chmod +x ./.github/workflows/jwt.sh
+        #   access_token=$(bash ./.github/workflows/jwt.sh)
+        #   echo ::set-output name=ACCESS_TOKEN::$access_token
         env:
           GITHUB_NAME: ${{ github.actor }}
           SHA: ${{ github.sha }}
@@ -39,10 +43,10 @@ jobs:
       - name: send grade
         run: |
           curl -X POST https://univ-grade-system-fsa.herokuapp.com/api/grade \
-            -H 'Authorization:Bearer ${{ env.ACCESS_TOKEN }}' \
+            -H 'Authorization:Bearer ${{ env.token }}' \
             -H 'Content-Type:application/json' \
             -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
         env:
           DATE: ${{ steps.commit_date_unix_epoch.outputs.DATE }}
           GRADE: ${{ steps.calculate_grade.outputs.GRADE }}
-          ACCESS_TOKEN: ${{ steps.generate_access_token.outputs.ACCESS_TOKEN }}
+          ACCESS_TOKEN: ${{ steps.generate_access_token.outputs.token }}
