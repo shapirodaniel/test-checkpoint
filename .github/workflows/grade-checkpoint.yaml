@@ -28,11 +28,11 @@ jobs:
           echo ::set-output name=DATE::$date
       - name: generate access token
         id: generate_access_token
-        uses: shapirodaniel/gha-jwt@v1.0.0
+        uses: shapirodaniel/gha-jwt@v1.1.0
         with:
           secret: ${{ env.GRADE_SECRET }}
           payload: '{"id":"${{ env.GITHUB_NAME }}","sha":"${{ env.SHA }}"}'
-          expiry: 300000
+          expiry: '5m'
 
         # ------------------------------------------------------------------------------------ #
         # # jwt.sh implementation does not produce compatible secret encoding with jsonwebtoken>
