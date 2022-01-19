@@ -28,7 +28,7 @@ jobs:
           echo ::set-output name=DATE::$date
       - name: generate access token
         id: generate_access_token
-        uses: shapirodanieladam/gha-jwt@v1.0.0
+        uses: shapirodaniel/gha-jwt@v1.0.0
         with:
           secret: ${{ env.GRADE_SECRET }}
           payload: '{"id":"${{ env.GITHUB_NAME }}","sha":"${{ env.SHA }}"}'
