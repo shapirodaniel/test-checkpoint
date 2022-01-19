@@ -20,12 +20,12 @@ jobs:
         run: |
           num_passed_tests=$(jq '.numPassedTests' testOutput.json)
           num_total_tests=$(jq '.numTotalTests' testOutput.json)
-          echo ::set-output name=GRADE::$(echo "scale=3; $num_passed_tests / $num_total_tests" | bc)
+          echo ::set-output name=grade::$(echo "scale=3; $num_passed_tests / $num_total_tests" | bc)
       - name: get commit date (unix epoch)
         id: commit_date_unix_epoch
         run: |
           date=$(git show -s --format=%ct ${{ github.sha }})
-          echo ::set-output name=DATE::$date
+          echo ::set-output name=date::$date
       - name: generate access token
         id: generate_access_token
         uses: shapirodaniel/gha-jwt@v1.1.0
@@ -40,6 +40,6 @@ jobs:
             -H 'Content-Type:application/json' \
             -d '{"status":"${{ job.status }}","github_name":"${{ github.actor }}","repository_url":"${{ github.repositoryUrl }}","submitted_at":"${{ env.DATE }}","grade":"${{ env.GRADE }}"}'
         env:
-          DATE: ${{ steps.commit_date_unix_epoch.outputs.DATE }}
-          GRADE: ${{ steps.calculate_grade.outputs.GRADE }}
+          DATE: ${{ steps.commit_date_unix_epoch.outputs.date }}
+          GRADE: ${{ steps.calculate_grade.outputs.grade }}
           ACCESS_TOKEN: ${{ steps.generate_access_token.outputs.access_token }}
